@@ -94,6 +94,26 @@ git add aeron
 git commit -m "Update aeron submodule to <new-commit>"
 ```
 
+> **注意**：`docs/index.md` 是 GitHub Pages 的入口页面，Jekyll 构建时会将其生成为 `index.html`。缺少此文件会导致站点根路径 404。新增文档时无需动它，但不要删除。
+
+## 创建 GitHub Pages 检查清单
+
+首次部署或迁移仓库时，确认以下文件齐全：
+
+```
+docs/
+├── index.md          # ★ 必须：首页，Jekyll 生成 index.html
+├── _config.yml       # ★ 必须：Jekyll 配置（remote_theme, url 等）
+├── 01-xxx.md         # 分析文档（需要有 YAML frontmatter: title + nav_order）
+├── 02-xxx.md
+└── ...
+```
+
+`.github/workflows/deploy.yml` 中的 link rewrite step 需要注意：
+- `sed` 的匹配模式要与文档中的链接格式一致（如 `](aeron/...`）
+- submodule 路径变更时需要同步更新
+- `submodules: false` 加速 checkout（只需 submodule 的 commit hash）
+
 ## 贡献
 
 欢迎提交 PR 修正错误或补充新内容。请确保引用的行号与当前 submodule 版本一致。
