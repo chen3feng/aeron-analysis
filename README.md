@@ -49,6 +49,7 @@ cd aeron-analysis
 | 7 | [Archive 实现分析](docs/07-Archive分析.md) | Recording/Replay 持久化、Catalog 索引、ControlSession、Segment 文件存储 |
 | 8 | [Cluster 实现分析](docs/08-Cluster分析.md) | Raft 共识、Election 选举状态机(18 状态)、日志复制、多通道架构、Snapshot |
 | 9 | [C 与 C++ 实现](docs/09-C与C++实现.md) | C Client/Driver 独立实现、与 Java 版本的对应关系、C++ 客户端示例 |
+| 10 | [性能优化技巧](docs/10-性能优化技巧.md) | Lock-Free CAS、堆外内存、VarHandle、缓存行对齐、sendmmsg/recvmmsg、Flyweight、热路径无分配 |
 
 ## 文档特点
 
