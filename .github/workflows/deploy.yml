@@ -1,0 +1,64 @@
+name: Deploy Jekyll site
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Get aeron submodule commit
+        run: |
+          COMMIT=$(git ls-tree HEAD aeron | awk '{print $3}')
+          if [ -z "$COMMIT" ]; then
+            echo "::error::Could not read aeron submodule commit."
+            exit 1
+          fi
+          echo "aeron submodule pinned at: $COMMIT"
+          echo "AERON_COMMIT=$COMMIT" >> $GITHUB_ENV
+
+      - name: Rewrite source links for Pages
+        run: |
+          BASE="https://github.com/aeron-io/aeron/blob/${AERON_COMMIT}"
+          cd docs
+          for f in 0*.md; do
+            sed -i "s|](aeron/|](${BASE}/|g" "$f"
+          done
+          echo "Links rewritten to $BASE"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: docs
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
