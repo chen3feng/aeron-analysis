@@ -36,7 +36,7 @@ jobs:
         run: |
           BASE="https://github.com/aeron-io/aeron/blob/${AERON_COMMIT}"
           cd docs
-          for f in 0*.md; do
+          for f in [0-9]*.md; do
             sed -i "s|](aeron/|](${BASE}/|g" "$f"
           done
           echo "Links rewritten to $BASE"
